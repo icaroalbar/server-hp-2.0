@@ -1,19 +1,13 @@
+const { ddbClient, ses, aws } = require("../libs/awsClient")
 const { Telegraf } = require('telegraf')
 const nodemailer = require("nodemailer")
 
 const { PutItemCommand } = require("@aws-sdk/client-dynamodb")
-const { ddbClient } = require("../libs/ddbClient")
 const { ptBR } = require("date-fns/locale");
 const { format } = require('date-fns');
 
-let transporter = nodemailer.createTransport({
-    host: process.env.SES_HOST,
-    port: process.env.SES_PORT,
-    secure: process.env.SES_SECURE, // true for 465, false for other ports
-    auth: {
-        user: process.env.SES_USER, // generated ethereal user
-        pass: process.env.SES_PASS, // generated ethereal password
-    },
+const transporter = nodemailer.createTransport({
+    SES: { ses, aws },
 });
 
 module.exports = class sendController {
